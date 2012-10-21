@@ -8,7 +8,7 @@ How To:
 
 1. Download XML data from openstreetmap.org. Select a region on the map, then click "Export" and choose "OpenStreetMap XML data". The resulting OSM file will be downloaded. 
 
-If the zoom level is such that the map contains a lot of elements, openstreetmap.org will not allow you to save the file, because of its large size. You can use services like http://sharemap.org that will let you download big maps.
+If the zoom level is such that the map contains a lot of elements, openstreetmap.org will not allow you to save the file, because of its large size. You can use services like http://extract.bbbike.org that will let you download big maps.
 
 2. place the downloaded file in this directory under the name map.osm
 
