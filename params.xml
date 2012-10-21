@@ -1,0 +1,25 @@
+<p:params xmlns:p="http://lapin-bleu.net/osm2svg/ns">
+
+
+  <!-- this controls whether landfill, landuses and other polygons are shown or not. -->
+  <!-- If the area of their bounding box is greater than this number times the total -->
+  <!-- area of the map, then the polygon is shown on the map. -->
+  <!-- so, the greater this number, the fewer surfaces will be shown -->
+  
+  <p:area-threshold>0.0000000000001</p:area-threshold>
+
+
+  <!-- What objects are rendered  -->
+  <p:param type="place" subtype="city"/>
+  <p:param type="highway" subtype="motorway"/>
+  <p:param type="highway" subtype="motorway_link"/>
+  <p:param type="highway" subtype="primary"/>
+  <p:param type="highway" subtype="primary_link"/>
+  <p:param type="highway" subtype="trunk"/>
+  <p:param type="highway" subtype="trunk_link"/>
+  <p:param type="highway" subtype="secondary"/>
+  <p:param type="highway" subtype="tertiary"/>
+  <p:param type="landuse" subtype="forest"/>
+
+</p:params>
+

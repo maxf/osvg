@@ -1,0 +1,51 @@
+.landuse {
+    stroke-width: 100;
+    stroke: #9f9;
+    fill: #9f9;
+}
+
+
+.highway {
+    fill: none;
+}
+
+.motorway {
+    stroke-width: 100;
+    stroke: #99f;
+}
+
+.motorway_link {
+    stroke-width: 80;
+    stroke: #99f;
+}
+
+.trunk {
+    stroke-width: 100;
+    stroke: #f99;
+}
+
+.trunk_link {
+    stroke-width: 80;
+    stroke: #f99;
+}
+
+.primary, .primary_link {
+    stroke-width: 50;
+    stroke: #f99;
+}
+
+.secondary {
+    stroke-width: 50;
+    stroke: #f99;
+}
+
+.tertiary {
+    stroke-width: 20;
+    stroke: #faa;
+}
+
+.place {
+    font-size: 600px;
+    font-family: Verdana;
+    fill: black;
+}
