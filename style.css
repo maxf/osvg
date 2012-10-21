@@ -1,5 +1,9 @@
-.landuse {
-    stroke-width: 100;
+.forest {
+    stroke: #7f7;
+    fill: #7f7;
+}
+
+.park {
     stroke: #9f9;
     fill: #9f9;
 }
@@ -45,7 +49,18 @@
 }
 
 .place {
-    font-size: 600px;
+    font-size: 500px;
     font-family: Verdana;
     fill: black;
+}
+
+.riverbank {
+    fill: #55f;
+    stroke: #55f;
+}
+
+.route {
+    stroke-width: 50;
+    stroke: #aaa;
+    fill: none;
 }

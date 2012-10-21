@@ -19,7 +19,13 @@
   <p:param type="highway" subtype="trunk_link"/>
   <p:param type="highway" subtype="secondary"/>
   <p:param type="highway" subtype="tertiary"/>
+
+  <p:param type="route" subtype="train"/>
+
+  <p:param type="waterway" subtype="riverbank"/>
+
   <p:param type="landuse" subtype="forest"/>
+  <p:param type="leisure" subtype="park"/>
 
 </p:params>
 

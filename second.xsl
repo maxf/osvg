@@ -8,16 +8,16 @@
 
 
   <x:variable name="minlat"
-              select="number(if (/osm/bounds) then /osm/bounds/@minlat else fn:replace(/osm/bound/@box,'([0-9.]+),[0-9.]+,[0-9.]+,[0-9.]+', '$1'))"/>
+              select="number(if (/osm/bounds) then /osm/bounds/@minlat else fn:replace(/osm/bound/@box,'([\-0-9.]+),[\-0-9.]+,[\-0-9.]+,[\-0-9.]+', '$1'))"/>
 
   <x:variable name="minlon"
-              select="number(if (/osm/bounds) then /osm/bounds/@minlon else fn:replace(/osm/bound/@box,'[0-9.]+,([0-9.]+),[0-9.]+,[0-9.]+', '$1'))"/>
+              select="number(if (/osm/bounds) then /osm/bounds/@minlon else fn:replace(/osm/bound/@box,'[\-0-9.]+,([\-0-9.]+),[\-0-9.]+,[\-0-9.]+', '$1'))"/>
 
   <x:variable name="maxlat"
-              select="number(if (/osm/bounds) then /osm/bounds/@maxlat else fn:replace(/osm/bound/@box,'[0-9.]+,[0-9.]+,([0-9.]+),[0-9.]+', '$1'))"/>
+              select="number(if (/osm/bounds) then /osm/bounds/@maxlat else fn:replace(/osm/bound/@box,'[\-0-9.]+,[\-0-9.]+,([\-0-9.]+),[\-0-9.]+', '$1'))"/>
 
   <x:variable name="maxlon"
-              select="number(if (/osm/bounds) then /osm/bounds/@maxlon else fn:replace(/osm/bound/@box,'[0-9.]+,[0-9.]+,[0-9.]+,([0-9.]+)', '$1'))"/>
+              select="number(if (/osm/bounds) then /osm/bounds/@maxlon else fn:replace(/osm/bound/@box,'[\-0-9.]+,[\-0-9.]+,[\-0-9.]+,([\-0-9.]+)', '$1'))"/>
 
   <x:variable name="width" select="$scaling-factor * ($maxlon - $minlon)"/>
   <x:variable name="height" select="$scaling-factor * ($maxlat - $minlat)"/>
@@ -28,6 +28,7 @@
 
 
   <x:template match="/">
+    <x:message>====<x:value-of select="fn:replace(/osm/bound/@box,'([\-0-9.]+),[\-0-9.]+,[\-0-9.]+,[\-0-9.]+', '$1')"/></x:message>
     <x:apply-templates/>
   </x:template>
 
@@ -39,6 +40,7 @@
     <x:processing-instruction name="xml-stylesheet" select="' type=&quot;text/css&quot; href=&quot;style.css&quot;'"/>
     <svg version="1.1" viewBox="0 0 {$width} {$height}" width="100%" height="100%" id="svgroot" preserveAspectRatio="none">
       <x:apply-templates select="way"/>
+      <x:apply-templates select="relation"/>
       <x:apply-templates select="node"/>
     </svg>
   </x:template>
@@ -48,8 +50,9 @@
   </x:template>
 
   <x:template match="way[tag[@k='highway']]">
-    <x:variable name="subtype" select="tag[@k='highway']/@v"/>
-    <polyline class="highway {$subtype}">
+    <x:variable name="type" select="tag[@k='highway']/@k"/>
+    <x:variable name="subtype" select="tag[@k=$type]/@v"/>
+    <polyline class="{$type} {$subtype}">
       <x:attribute name="points">
         <x:for-each select="node">
           <x:value-of select="concat($scaling-factor * (@lon - $minlon),',', - $scaling-factor * (@lat - $maxlat),' ')"/>
@@ -58,15 +61,16 @@
     </polyline>
   </x:template>
 
-  <x:template match="way[tag[@k='landuse']]">
-    <x:variable name="subtype" select="tag[@k='landuse']/@v"/>
+  <x:template match="way[tag[@k='landuse' or @k='leisure' or @k='waterway']]">
+    <x:variable name="type" select="tag[@k='landuse' or @k='leisure' or @k='waterway']/@k"/>
+    <x:variable name="subtype" select="tag[@k=$type]/@v"/>
 
     <!-- calculate the bounding box area, to check if this is big enough to display -->
     <x:variable name="longitudes" select="node/@lon"/>
     <x:variable name="latitudes" select="node/@lon"/>
     <x:variable name="area" select="(fn:max($longitudes) - fn:min($longitudes)) * (fn:max($latitudes) - fn:min($latitudes))"/>
     <x:if test="$area > $params/p:area-threshold * $total-area">
-      <polyline class="landuse {$subtype}">
+      <polyline class="{$type} {$subtype}">
         <x:attribute name="points">
           <x:for-each select="node">
             <x:value-of select="concat($scaling-factor * (@lon - $minlon),',', - $scaling-factor * (@lat - $maxlat),' ')"/>
@@ -76,6 +80,47 @@
     </x:if>
   </x:template>
 
+  <x:template match="relation[tag[@k='landuse' or @k='leisure' or @k='waterway']]">
+    <x:variable name="type" select="tag[@k='landuse' or @k='leisure' or @k='waterway']/@k"/>
+    <x:variable name="subtype" select="tag[@k=$type]/@v"/>
+
+
+    <x:for-each select="member">
+      <g>
+        <!-- calculate the bounding box area, to check if this is big enough to display -->
+        <x:variable name="longitudes" select="node/@lon"/>
+        <x:variable name="latitudes" select="node/@lon"/>
+        <x:variable name="area" select="(fn:max($longitudes) - fn:min($longitudes)) * (fn:max($latitudes) - fn:min($latitudes))"/>
+        <x:if test="$area > $params/p:area-threshold * $total-area">
+          <polyline class="{$type} {$subtype}">
+            <x:attribute name="points">
+              <x:for-each select="node">
+                <x:value-of select="concat($scaling-factor * (@lon - $minlon),',', - $scaling-factor * (@lat - $maxlat),' ')"/>
+              </x:for-each>
+            </x:attribute>
+          </polyline>
+        </x:if>
+      </g>
+    </x:for-each>
+  </x:template>
+
+
+  <x:template match="relation[tag[@k='route']]">
+    <x:variable name="type" select="tag[@k='route']/@k"/>
+    <x:variable name="subtype" select="tag[@k=$type]/@v"/>
+
+    <x:for-each select="member">
+      <g>
+        <polyline class="{$type} {$subtype}">
+          <x:attribute name="points">
+            <x:for-each select="node">
+              <x:value-of select="concat($scaling-factor * (@lon - $minlon),',', - $scaling-factor * (@lat - $maxlat),' ')"/>
+            </x:for-each>
+          </x:attribute>
+        </polyline>
+      </g>
+    </x:for-each>
+  </x:template>
 
 </x:transform>
 
